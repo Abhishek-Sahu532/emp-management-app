@@ -33,15 +33,14 @@ function App() {
 			try {
 				dispatch(currentUserStart());
 				const res = await axios.get('/api/v1/users/current-user');
-				console.log('res', res.data);
-				dispatch(currentUserSuccess(res.data));
+				// console.log('res', res.data);
+				dispatch(currentUserSuccess(res.data.data));
 			} catch (error) {
 				let htmlError = extractErrorMessage(error.response?.data);
 				// console.log(htmlError);
 				dispatch(currentUserFailure(htmlError || error.message));
 			}
 		};
-
 		fetchCurrentUser();
 	}, [dispatch]);
 

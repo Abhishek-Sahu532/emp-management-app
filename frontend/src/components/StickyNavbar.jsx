@@ -21,6 +21,7 @@ import { sigOutSuccess } from '../redux/users/userSlice';
 export default function StickyNavbar() {
 	const [openNav, setOpenNav] = React.useState(false);
 	const { success } = useSelector((state) => state.user);
+  // console.log(success)
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
@@ -134,7 +135,7 @@ export default function StickyNavbar() {
 							<Button
 								variant='text'
 								size='sm'
-								className='hidden lg:inline-block'>
+								className=' lg:inline-block'>
 								<span>
 									<Link to={'/sign-in'}>Sign in </Link>
 								</span>
@@ -142,7 +143,7 @@ export default function StickyNavbar() {
 							<Button
 								variant='gradient'
 								size='sm'
-								className='hidden lg:inline-block'>
+								className=' lg:inline-block'>
 								<span>
 									<Link to={'/sign-up'}>Sign up </Link>
 								</span>
@@ -158,8 +159,8 @@ export default function StickyNavbar() {
 								/>
 							</MenuHandler>
 							<MenuList>
-								<MenuItem>
-									<span onClick={handelLogout}>Sign out</span>
+								<MenuItem onClick={handelLogout}>
+									<span >Sign out</span>
 								</MenuItem>
 							</MenuList>
 						</Menu>
