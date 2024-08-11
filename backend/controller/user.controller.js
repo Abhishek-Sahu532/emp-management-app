@@ -134,13 +134,7 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
   // console.log(req.user)
   return res
     .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        req.user ,
-        "Current user fetched successfulyy"
-      )
-    );
+    .json(new ApiResponse(200, req.user, "Current user fetched successfulyy"));
 });
 
 export const updateAccountDetails = asyncHandler(async (req, res) => {
@@ -171,9 +165,28 @@ export const updateAccountDetails = asyncHandler(async (req, res) => {
 });
 
 export const getAllUsers = asyncHandler(async (req, res) => {
-  const users = await User.find({});
-  if (!users) {
-    throw new ApiError(400, "Error while fetching the users");
+  const { department, location, empname, employeeID, sort } = req.query;
+
+  let queryObject = {};
+
+  if (department) {
+    queryObject.departmentName = department;
+  }
+  if (location) {
+    queryObject.location = location;
+  }
+  if (empname) {
+    queryObject.fullname = empname;
+  }
+  if (employeeID) {
+    queryObject.employeeID = employeeID;
+  }
+
+  let users = await User.find(queryObject);
+
+  if (sort) {
+    let sortFix = sort.replace(",", " ");
+    users = users.sort(sortFix);
   }
   // console.log(users)
   const usersForServer = users.map((user) => {

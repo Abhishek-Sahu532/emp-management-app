@@ -11,6 +11,11 @@ import {
   IconButton,
   Tooltip,
   Input,
+  Avatar,
+  Menu,
+  MenuHandler,
+  MenuList,
+  MenuItem,
 } from "@material-tailwind/react";
 import UpdateEmpDetailsBox from "./UpdateEmpDetailsBox";
 import { TrashIcon } from "@heroicons/react/24/solid";
@@ -26,8 +31,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { extractErrorMessage } from "../extractErrorMessage";
 import { toast } from "react-toastify";
-import Loader from './Loader'
-
+import Loader from "./Loader";
 
 const TABLE_HEAD = [
   "Emp Id / Full Name",
@@ -140,12 +144,23 @@ export function Table() {
               </div>
               <div className="flex w-full shrink-0 gap-2 md:w-max">
                 <div className="w-full md:w-72">
-                  <Input
+                  <Input size="md"
                     label="Search"
                     icon={<MagnifyingGlassIcon className="h-5 w-5" />}
                   />
                 </div>
               </div>
+
+              <Menu>
+                {/* <MenuHandler>
+                  <Avatar src="/User.jpg" alt="avatar" variant="rounded" />{" "}
+                </MenuHandler> */}
+                <MenuList>
+                  <MenuItem>
+                    <span>Sign out</span>
+                  </MenuItem>
+                </MenuList>
+              </Menu>
             </div>
           </CardHeader>
           <CardBody className="px-6">

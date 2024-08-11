@@ -8,9 +8,12 @@ import {
   DialogFooter,
   IconButton,
   Input,
+  Select,
+  Option,
+  Checkbox,
 } from "@material-tailwind/react";
 import { PencilIcon } from "@heroicons/react/24/solid";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import {
   updateUserStart,
   updateUserFailure,
@@ -18,52 +21,55 @@ import {
 } from "../redux/users/empsSlice";
 import { extractErrorMessage } from "../extractErrorMessage";
 import axios from "axios";
-
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 
+const departments = ["HR", "IT", "Sales", "Product", "Marketing"];
+
 export default function UpdateEmpDetailsBox({ user }) {
-  // console.log(user)
   const [open, setOpen] = React.useState(false);
   const {
     register,
     handleSubmit,
     setValue,
+    control,
     formState: { errors },
   } = useForm({
     defaultValues: {
       location: user.location,
       companyName: user.companyName,
       salary: user.salary,
-      departmentName: user.departmentName,
+      departmentName: user.departmentName ? user.departmentName.split(",") : [],
       status: user.status,
     },
   });
   const dispatch = useDispatch();
+
   React.useEffect(() => {
-    // Populate the form fields with user data when the dialog opens
     setValue("location", user.location);
     setValue("companyName", user.companyName);
     setValue("salary", user.salary);
-    setValue("departmentName", user.departmentName);
+    setValue(
+      "departmentName",
+      user.departmentName ? user.departmentName.split(",") : []
+    );
     setValue("status", user.status);
   }, [user, setValue]);
 
   const handleOpen = () => setOpen(!open);
 
   const onSubmit = async (data) => {
-    // Handle form submission
-    // console.log("data", data);
+    data.departmentName = data.departmentName.join(",");
     try {
       dispatch(updateUserStart());
       const config = { headers: { "Content-Type": "application/json" } };
       const res = await axios.put(
         `/api/v1/users/update-emp-details/${user.employeeID}`,
-        data , 
+        data,
         config
       );
       dispatch(updateUserSuccess(res.data));
-	  toast.success('Details updated successfully');
+      toast.success("Details updated successfully");
     } catch (error) {
       let htmlError = extractErrorMessage(error.response?.data);
       dispatch(updateUserFailure(htmlError || error.message));
@@ -128,12 +134,33 @@ export default function UpdateEmpDetailsBox({ user }) {
               <label className="block text-sm font-medium">
                 Department Name:
               </label>
-              <Input
-                {...register("departmentName", {
-                  required: "Department Name is required",
-                })}
-                error={errors.departmentName?.message}
+              <Controller
+                name="departmentName"
+                control={control}
+                rules={{ required: "At least one department is required" }}
+                render={({ field: { onChange, value } }) => (
+                  <div className="flex flex-wrap gap-4">
+                    {departments.map((dept) => (
+                      <Checkbox
+                        key={dept}
+                        label={dept}
+                        checked={value.includes(dept)}
+                        onChange={(e) => {
+                          const updatedValue = e.target.checked
+                            ? [...value, dept]
+                            : value.filter((v) => v !== dept);
+                          onChange(updatedValue);
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
               />
+              {errors.departmentName && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.departmentName.message}
+                </p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium">Status:</label>
